@@ -1,0 +1,236 @@
+.dashboard { display: flex; flex-direction: column; gap: 32px; }
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.dashboard-title {
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.dashboard-subtitle { font-size: 15px; color: var(--text-secondary); margin-top: 6px; }
+
+.current-role-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--accent-light);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-full);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-xs);
+  transition: all var(--transition);
+}
+.stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-value { font-size: 26px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+.stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+
+/* Mode Cards */
+.dashboard-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+@media (max-width: 640px) { .dashboard-actions-grid { grid-template-columns: 1fr; } }
+
+.mode-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: left;
+}
+.mode-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+.mode-card-primary {
+  background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.06));
+  border-color: rgba(99,102,241,0.3);
+}
+.mode-card-primary:hover { border-color: var(--accent); }
+
+.mode-card-secondary {
+  background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.04));
+  border-color: rgba(16,185,129,0.3);
+}
+.mode-card-secondary:hover { border-color: var(--success); }
+
+.mode-card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--accent-light);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mode-card-secondary .mode-card-icon { background: var(--success-light); color: var(--success); }
+
+.mode-card-content { flex: 1; }
+.mode-card-content h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.mode-card-content p  { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+.mode-card-arrow { color: var(--text-muted); flex-shrink: 0; transition: transform var(--transition); }
+.mode-card:hover .mode-card-arrow { transform: translateX(4px); color: var(--accent); }
+
+/* Sections */
+.section { display: flex; flex-direction: column; gap: 16px; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title    { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.section-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+/* Roles */
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+@media (max-width: 900px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 540px) { .roles-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  text-align: center;
+}
+.role-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.role-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.role-card-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+.role-card-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 48px 24px;
+  background: var(--bg-card);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-xl);
+}
+.empty-state-icon { color: var(--text-muted); margin-bottom: 4px; }
+.empty-state h3   { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.empty-state p    { font-size: 14px; color: var(--text-secondary); max-width: 360px; }
+
+/* Table */
+.recent-table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.recent-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.recent-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border);
+}
+
+.recent-table td {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.recent-table tbody tr:last-child td { border-bottom: none; }
+
+.recent-table-row {
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.recent-table-row:hover td { background: var(--bg-hover); }
+
+.table-role  { font-weight: 600; color: var(--text-primary); }
+.table-score { font-weight: 700; color: var(--accent); font-family: var(--font-code); }

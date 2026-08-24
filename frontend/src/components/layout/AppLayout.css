@@ -1,0 +1,29 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--transition-slow);
+}
+
+@media (max-width: 768px) {
+  .app-main { margin-left: 0; }
+}
+
+.app-content {
+  flex: 1;
+  padding: calc(var(--navbar-height) + 24px) 28px 32px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .app-content { padding: calc(var(--navbar-height) + 16px) 16px 24px; }
+}

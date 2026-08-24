@@ -1,0 +1,145 @@
+.admin { display: flex; flex-direction: column; gap: 24px; }
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.admin-title-wrap { display: flex; align-items: center; gap: 12px; }
+.admin-icon { color: var(--accent); flex-shrink: 0; }
+.admin-title    { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.admin-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+/* Filters */
+.admin-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-search-wrap { position: relative; flex: 1; min-width: 200px; }
+.admin-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+.admin-search {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px 0 38px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: var(--font-ui);
+  outline: none;
+  transition: border-color var(--transition);
+}
+.admin-search:focus { border-color: var(--accent); }
+
+.admin-select {
+  height: 40px;
+  padding: 0 32px 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-ui);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color var(--transition);
+}
+.admin-select:focus { border-color: var(--accent); }
+
+/* Table */
+.admin-table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.admin-table tbody tr:last-child td { border-bottom: none; }
+
+.admin-row { transition: background var(--transition); }
+.admin-row:hover td { background: var(--bg-hover); }
+
+.admin-question-title { font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.4; max-width: 400px; }
+.admin-role { font-weight: 600; color: var(--text-primary); font-size: 13px; }
+
+.admin-actions { display: flex; gap: 6px; }
+
+.admin-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  border: 1px solid transparent;
+}
+.admin-action-btn.edit   { color: var(--accent); border-color: var(--border); }
+.admin-action-btn.edit:hover   { background: var(--accent-light); border-color: var(--accent); }
+.admin-action-btn.delete { color: var(--danger); border-color: var(--border); }
+.admin-action-btn.delete:hover { background: var(--danger-light); border-color: var(--danger); }
+
+.admin-empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* Form */
+.admin-form { display: flex; flex-direction: column; gap: 16px; }
+.admin-form-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 600px) { .admin-form-row { grid-template-columns: 1fr; } }
+
+/* Delete modal */
+.delete-modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 8px 0 4px;
+}
+.delete-modal-icon { color: var(--danger); margin-bottom: 4px; }
+.delete-modal-body p { font-size: 14px; color: var(--text-secondary); }
+.delete-modal-qname { font-weight: 700; color: var(--text-primary); font-size: 14px; }
+.delete-modal-warning { font-size: 12px; color: var(--danger); }

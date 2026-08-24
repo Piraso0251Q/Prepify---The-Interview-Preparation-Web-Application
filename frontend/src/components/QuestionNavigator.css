@@ -1,0 +1,22 @@
+.qnav { display: flex; flex-direction: column; gap: 8px; }
+.qnav-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.qnav-dots  { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.qnav-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qnav-dot:hover { border-color: var(--accent); color: var(--accent); }
+.qnav-current  { background: var(--accent); color: white; border-color: var(--accent); }
+.qnav-answered { background: var(--success-light); color: var(--success); border-color: var(--success); }
