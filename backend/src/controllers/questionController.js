@@ -185,17 +185,28 @@ const generateQuestions = async (req, res) => {
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: "system", content: prompt }],
-      model: "llama3-8b-8192", // Extremely fast and free model
+      model: "llama-3.1-8b-instant", // Updated to current supported model
       temperature: 0.8, // Slightly higher for more variety
       response_format: { type: "json_object" },
     });
 
     const responseContent = chatCompletion.choices[0]?.message?.content;
     const parsedData = JSON.parse(responseContent);
-    const newQuestions = parsedData.questions;
+    
+    // Sanitize the output to strictly match our Mongoose Schema enums
+    const newQuestions = (parsedData.questions || []).map(q => ({
+      title: q.title || "Untitled Question",
+      description: q.description || "",
+      role: role, // Force the requested role so enum doesn't fail
+      topic: q.topic || "General",
+      // Ensure difficulty matches enum exactly
+      difficulty: ["Easy", "Medium", "Hard"].includes(q.difficulty) ? q.difficulty : "Medium",
+      modelAnswer: q.modelAnswer || "No answer provided.",
+      explanation: q.explanation || "",
+      keywords: Array.isArray(q.keywords) ? q.keywords : [],
+    }));
 
     // Secretly save them to the database so they have real MongoDB _ids
-    // This allows them to be bookmarked and saved in History normally
     const savedQuestions = await Question.insertMany(newQuestions);
 
     res.status(200).json({
@@ -203,7 +214,7 @@ const generateQuestions = async (req, res) => {
       questions: savedQuestions,
     });
   } catch (error) {
-    console.error("Generate questions error:", error);
+    console.error("Generate questions error Details:", error);
     res.status(500).json({ success: false, message: "Failed to generate questions." });
   }
 };
