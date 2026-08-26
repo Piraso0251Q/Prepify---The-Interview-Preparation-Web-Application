@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { storage, STORAGE_KEYS } from "../utils/storage";
-import { USERS } from "../data/users";
+import { authAPI } from "../utils/api";
 
 const AuthContext = createContext(null);
 
@@ -13,33 +13,44 @@ export const AuthProvider = ({ children }) => {
     () => storage.get(STORAGE_KEYS.SUBSCRIPTION)
   );
 
-  const login = (email, password) => {
-    const found = USERS.find(u => u.email === email && u.password === password);
-    if (!found) return { success: false, error: "Invalid email or password." };
-    const { password: _, ...safeUser } = found;
-    setUser(safeUser);
-    storage.set(STORAGE_KEYS.USER, safeUser);
-    return { success: true, isAdmin: safeUser.isAdmin };
+  // ── LOGIN — calls backend instead of checking hardcoded array ──
+  const login = async (email, password) => {
+    const data = await authAPI.login(email, password);
+    if (!data.success) return { success: false, error: data.message };
+
+    // Save token so future API calls are authenticated
+    localStorage.setItem("accessToken", data.accessToken);
+
+    setUser(data.user);
+    storage.set(STORAGE_KEYS.USER, data.user);
+
+    // Sync subscription from backend user
+    if (data.user.subscription?.plan) {
+      setSubscription(data.user.subscription);
+      storage.set(STORAGE_KEYS.SUBSCRIPTION, data.user.subscription);
+    }
+
+    return { success: true, isAdmin: data.user.isAdmin };
   };
 
-  const signup = (name, email, password) => {
-    const exists = USERS.find(u => u.email === email);
-    if (exists) return { success: false, error: "An account with this email already exists." };
-    const newUser = {
-      id: `user-${Date.now()}`,
-      name,
-      email,
-      avatar: name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2),
-      role: "Frontend",
-      isAdmin: false,
-      joinedAt: new Date().toISOString().split("T")[0],
-    };
-    setUser(newUser);
-    storage.set(STORAGE_KEYS.USER, newUser);
+  // ── SIGNUP — calls backend to create a real account in DB ──────
+  const signup = async (name, email, password) => {
+    const data = await authAPI.signup(name, email, password);
+    if (!data.success) return { success: false, error: data.message };
+
+    // Save token
+    localStorage.setItem("accessToken", data.accessToken);
+
+    setUser(data.user);
+    storage.set(STORAGE_KEYS.USER, data.user);
+
     return { success: true };
   };
 
-  const logout = () => {
+  // ── LOGOUT — clears token + calls backend to clear cookie ──────
+  const logout = async () => {
+    await authAPI.logout();
+    localStorage.removeItem("accessToken");
     setUser(null);
     storage.remove(STORAGE_KEYS.USER);
     // Subscription is intentionally NOT cleared on logout so returning admins keep their plan

@@ -33,8 +33,7 @@ export default function SignupPage() {
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setLoading(true);
-    await new Promise(r => setTimeout(r, 700));
-    const result = signup(form.name, form.email, form.password);
+    const result = await signup(form.name, form.email, form.password);
     setLoading(false);
     if (result.success) navigate("/dashboard");
     else setServerError(result.error);
