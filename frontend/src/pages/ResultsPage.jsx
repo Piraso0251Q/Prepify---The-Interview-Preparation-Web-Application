@@ -38,17 +38,30 @@ export default function ResultsPage() {
     return { questionResults, overallScore, role, completedAt: new Date().toISOString() };
   }, [historyEntry, questions, answers]);
 
-  // Save to history once
+  // Save to history (backend) once when interview is freshly completed
   useEffect(() => {
     if (!saved && id === "new" && data && questions.length > 0) {
       setSaved(true);
-      const entry = {
-        id: `interview-${Date.now()}`,
-        ...data,
-        questions: data.questionResults?.map(r => r.question),
+
+      // Build the session payload for the backend
+      const sessionPayload = {
+        role: data.role,
+        questions: data.questionResults?.map(r => ({
+          questionId: r.question._id || r.question.id,
+          title: r.question.title,
+          topic: r.question.topic,
+          difficulty: r.question.difficulty,
+        })),
+        answers: Object.fromEntries(
+          Object.entries(answers).map(([k, v]) => [k, v])
+        ),
+        startTime: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // approximate
+        endTime: new Date().toISOString(),
+        timeTaken: 30 * 60, // seconds
       };
-      addEntry(entry);
-      awardTokens(entry.id, data.overallScore, data.role);
+
+      addEntry(sessionPayload);
+      awardTokens(`interview-${Date.now()}`, data.overallScore, data.role);
       resetInterview();
     }
   }, [data]);

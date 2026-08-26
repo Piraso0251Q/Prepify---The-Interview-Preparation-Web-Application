@@ -1,26 +1,49 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Play, Clock, Target, Shuffle, ChevronRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useInterview } from "../context/InterviewContext";
-import { getRandomQuestions, ROLES } from "../data/questions";
+import { questionsAPI } from "../utils/api";
 import { Button } from "../components/ui/Button";
 import { DifficultyBadge, TopicBadge } from "../components/ui/Badge";
 import "./MockInterviewSetupPage.css";
+
+const ROLES = ["Frontend", "Backend", "Full-Stack", "SDE-1", "QA"];
+const ROLE_ICONS = { Frontend: "⚛️", Backend: "⚙️", "Full-Stack": "🔗", "SDE-1": "💡", QA: "🧪" };
+
+// Fisher-Yates shuffle — picks random questions from the pool
+const pickRandom = (arr, count) => {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+};
 
 export default function MockInterviewSetupPage() {
   const { selectedRole, setSelectedRole } = useAuth();
   const { startInterview } = useInterview();
   const navigate = useNavigate();
+  const [allQuestions, setAllQuestions] = useState([]);
+  const [previewQuestions, setPreviewQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const previewQuestions = getRandomQuestions(selectedRole, 5);
+  // Fetch questions for the selected role from backend
+  useEffect(() => {
+    const fetch = async () => {
+      setLoading(true);
+      const data = await questionsAPI.getAll({ role: selectedRole });
+      if (data.success) {
+        setAllQuestions(data.questions);
+        setPreviewQuestions(pickRandom(data.questions, 5));
+      }
+      setLoading(false);
+    };
+    fetch();
+  }, [selectedRole]);
 
   const handleStart = () => {
-    const questions = getRandomQuestions(selectedRole, 5);
+    const questions = pickRandom(allQuestions, 5);
     startInterview(questions, selectedRole);
     navigate("/interview/active");
   };
-
-  const ROLE_ICONS = { Frontend: "⚛️", Backend: "⚙️", "Full-Stack": "🔗", "SDE-1": "💡", QA: "🧪" };
 
   return (
     <div className="setup page-enter">
@@ -65,7 +88,7 @@ export default function MockInterviewSetupPage() {
             </div>
           </div>
 
-          <Button size="lg" fullWidth icon={<Play size={18} />} onClick={handleStart}>
+          <Button size="lg" fullWidth icon={<Play size={18} />} onClick={handleStart} loading={loading}>
             Start Interview — {selectedRole}
           </Button>
 
@@ -82,18 +105,22 @@ export default function MockInterviewSetupPage() {
               <span className="setup-preview-note">5 random questions will be selected</span>
             </h2>
             <div className="setup-preview-list">
-              {previewQuestions.map((q, i) => (
-                <div key={q.id} className="setup-preview-item">
-                  <span className="setup-preview-num">{i + 1}</span>
-                  <div className="setup-preview-content">
-                    <p className="setup-preview-title">{q.title}</p>
-                    <div className="setup-preview-badges">
-                      <DifficultyBadge difficulty={q.difficulty} />
-                      <TopicBadge topic={q.topic} />
+              {loading ? (
+                <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Loading questions...</p>
+              ) : (
+                previewQuestions.map((q, i) => (
+                  <div key={q._id} className="setup-preview-item">
+                    <span className="setup-preview-num">{i + 1}</span>
+                    <div className="setup-preview-content">
+                      <p className="setup-preview-title">{q.title}</p>
+                      <div className="setup-preview-badges">
+                        <DifficultyBadge difficulty={q.difficulty} />
+                        <TopicBadge topic={q.topic} />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <p className="setup-preview-disclaimer">* Actual questions may differ from this preview</p>
           </div>
