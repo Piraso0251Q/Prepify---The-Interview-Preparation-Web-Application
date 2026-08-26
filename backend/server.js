@@ -27,8 +27,11 @@ app.use(
 );
 
 // ── Routes ─────────────────────────────────────────────────
-const authRoutes = require("./src/routes/authRoutes");
-app.use("/api/auth", authRoutes);
+const authRoutes     = require("./src/routes/authRoutes");
+const questionRoutes = require("./src/routes/questionRoutes");
+
+app.use("/api/auth",      authRoutes);
+app.use("/api/questions", questionRoutes);
 
 // ── Health Check ───────────────────────────────────────────
 app.get("/", (req, res) => {
