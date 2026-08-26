@@ -185,7 +185,7 @@ const generateQuestions = async (req, res) => {
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: "system", content: prompt }],
-      model: "llama-3.1-8b-instant", // Updated to current supported model
+      model: "openai/gpt-oss-20b", // Using the correct model for this specific API key
       temperature: 0.8, // Slightly higher for more variety
       response_format: { type: "json_object" },
     });
