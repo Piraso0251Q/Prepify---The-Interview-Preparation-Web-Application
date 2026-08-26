@@ -50,7 +50,7 @@ export default function MockInterviewSetupPage() {
             <h2 className="setup-card-title">Interview Configuration</h2>
             <div className="setup-info-grid">
               <div className="setup-info-item">
-                <Clock size={18} /> <div><span>Duration</span><strong>30 minutes</strong></div>
+                <Clock size={18} /> <div><span>Duration</span><strong>10 minutes</strong></div>
               </div>
               <div className="setup-info-item">
                 <Target size={18} /> <div><span>Questions</span><strong>10 questions</strong></div>

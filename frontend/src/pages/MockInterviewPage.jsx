@@ -10,7 +10,7 @@ import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
 import "./MockInterviewPage.css";
 
-const DURATION = 30 * 60; // 30 min
+const DURATION = 10 * 60; // 10 min
 
 export default function MockInterviewPage() {
   const navigate = useNavigate();

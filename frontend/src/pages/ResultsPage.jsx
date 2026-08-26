@@ -55,9 +55,9 @@ export default function ResultsPage() {
         answers: Object.fromEntries(
           Object.entries(answers).map(([k, v]) => [k, v])
         ),
-        startTime: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // approximate
+        startTime: new Date(Date.now() - 10 * 60 * 1000).toISOString(), // approximate
         endTime: new Date().toISOString(),
-        timeTaken: 30 * 60, // seconds
+        timeTaken: 10 * 60, // seconds
       };
 
       addEntry(sessionPayload);

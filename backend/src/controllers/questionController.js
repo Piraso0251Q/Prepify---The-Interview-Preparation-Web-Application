@@ -171,8 +171,8 @@ const generateQuestions = async (req, res) => {
 
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     
-    const prompt = `You are a technical interview system. Generate 10 unique, highly specific interview questions for a "${role}" role. 
-    Ensure they are not generic. Output strictly in JSON format as an object with a "questions" array.
+    const prompt = `You are a technical interview system. Generate EXACTLY 10 unique, highly specific interview questions for a "${role}" role. 
+    You MUST output exactly 10 questions, no more and no less. Do not output 6 or 8. Exactly 10. Ensure they are not generic. Output strictly in JSON format as an object with a "questions" array.
     Each question object MUST have exactly these keys:
     - title (string: the question itself)
     - description (string: 1 sentence providing context to the user)
