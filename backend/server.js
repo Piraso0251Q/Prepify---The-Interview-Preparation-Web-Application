@@ -27,11 +27,15 @@ app.use(
 );
 
 // ── Routes ─────────────────────────────────────────────────
-const authRoutes     = require("./src/routes/authRoutes");
-const questionRoutes = require("./src/routes/questionRoutes");
+const authRoutes      = require("./src/routes/authRoutes");
+const questionRoutes  = require("./src/routes/questionRoutes");
+const historyRoutes   = require("./src/routes/historyRoutes");
+const bookmarkRoutes  = require("./src/routes/bookmarkRoutes");
 
 app.use("/api/auth",      authRoutes);
 app.use("/api/questions", questionRoutes);
+app.use("/api/history",   historyRoutes);
+app.use("/api/bookmarks", bookmarkRoutes);
 
 // ── Health Check ───────────────────────────────────────────
 app.get("/", (req, res) => {
