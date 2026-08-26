@@ -171,8 +171,8 @@ const generateQuestions = async (req, res) => {
 
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     
-    const prompt = `You are a technical interview system. Generate EXACTLY 10 unique, highly specific interview questions for a "${role}" role. 
-    You MUST output exactly 10 questions, no more and no less. Do not output 6 or 8. Exactly 10. Ensure they are not generic. Output strictly in JSON format as an object with a "questions" array.
+    const prompt = `You are a technical interview system. Generate EXACTLY 5 unique, highly specific interview questions for a "${role}" role. 
+    You MUST output exactly 5 questions. Ensure they are not generic. Output strictly in JSON format as an object with a "questions" array.
     Each question object MUST have exactly these keys:
     - title (string: the question itself)
     - description (string: 1 sentence providing context to the user)
@@ -183,18 +183,29 @@ const generateQuestions = async (req, res) => {
     - explanation (string: 1 sentence explaining why interviewers ask this)
     - keywords (array of strings: 4-6 crucial technical terms expected in the answer)`;
 
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [{ role: "system", content: prompt }],
-      model: "openai/gpt-oss-20b", // Using the correct model for this specific API key
-      temperature: 0.8, // Slightly higher for more variety
-      response_format: { type: "json_object" },
-    });
+    // Fetch 5 questions twice in parallel to avoid hitting the AI's maximum token limit for a single JSON block
+    const [res1, res2] = await Promise.all([
+      groq.chat.completions.create({
+        messages: [{ role: "system", content: prompt }, { role: "user", content: "Generate batch 1" }],
+        model: "openai/gpt-oss-20b",
+        temperature: 0.8,
+        response_format: { type: "json_object" },
+      }),
+      groq.chat.completions.create({
+        messages: [{ role: "system", content: prompt }, { role: "user", content: "Generate batch 2 (completely different from batch 1)" }],
+        model: "openai/gpt-oss-20b",
+        temperature: 0.9,
+        response_format: { type: "json_object" },
+      })
+    ]);
 
-    const responseContent = chatCompletion.choices[0]?.message?.content;
-    const parsedData = JSON.parse(responseContent);
+    const parsed1 = JSON.parse(res1.choices[0]?.message?.content || '{"questions":[]}');
+    const parsed2 = JSON.parse(res2.choices[0]?.message?.content || '{"questions":[]}');
     
+    const combinedQuestions = [...(parsed1.questions || []), ...(parsed2.questions || [])];
+
     // Sanitize the output to strictly match our Mongoose Schema enums
-    const newQuestions = (parsedData.questions || []).map(q => ({
+    const newQuestions = combinedQuestions.map(q => ({
       title: q.title || "Untitled Question",
       description: q.description || "",
       role: role, // Force the requested role so enum doesn't fail
