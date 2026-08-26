@@ -6,10 +6,12 @@ const {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  generateQuestions,
 } = require("../controllers/questionController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
 // ── Public question routes (any logged-in user) ────────────
+router.get("/generate", protect, generateQuestions); // GET  /api/questions/generate
 router.get("/",    protect, getQuestions);      // GET  /api/questions
 router.get("/:id", protect, getQuestionById);   // GET  /api/questions/:id
 

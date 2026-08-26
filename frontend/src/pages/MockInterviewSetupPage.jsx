@@ -11,28 +11,20 @@ import "./MockInterviewSetupPage.css";
 const ROLES = ["Frontend", "Backend", "Full-Stack", "SDE-1", "QA"];
 const ROLE_ICONS = { Frontend: "⚛️", Backend: "⚙️", "Full-Stack": "🔗", "SDE-1": "💡", QA: "🧪" };
 
-// Fisher-Yates shuffle — picks random questions from the pool
-const pickRandom = (arr, count) => {
-  const shuffled = [...arr].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(count, shuffled.length));
-};
-
 export default function MockInterviewSetupPage() {
   const { selectedRole, setSelectedRole } = useAuth();
   const { startInterview } = useInterview();
   const navigate = useNavigate();
-  const [allQuestions, setAllQuestions] = useState([]);
   const [previewQuestions, setPreviewQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch questions for the selected role from backend
+  // Fetch 5 brand new unique questions from the backend (powered secretly by AI)
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
-      const data = await questionsAPI.getAll({ role: selectedRole });
+      const data = await questionsAPI.generate(selectedRole);
       if (data.success) {
-        setAllQuestions(data.questions);
-        setPreviewQuestions(pickRandom(data.questions, 5));
+        setPreviewQuestions(data.questions);
       }
       setLoading(false);
     };
@@ -40,8 +32,7 @@ export default function MockInterviewSetupPage() {
   }, [selectedRole]);
 
   const handleStart = () => {
-    const questions = pickRandom(allQuestions, 5);
-    startInterview(questions, selectedRole);
+    startInterview(previewQuestions, selectedRole);
     navigate("/interview/active");
   };
 
@@ -62,7 +53,7 @@ export default function MockInterviewSetupPage() {
                 <Clock size={18} /> <div><span>Duration</span><strong>30 minutes</strong></div>
               </div>
               <div className="setup-info-item">
-                <Target size={18} /> <div><span>Questions</span><strong>5 questions</strong></div>
+                <Target size={18} /> <div><span>Questions</span><strong>10 questions</strong></div>
               </div>
               <div className="setup-info-item">
                 <Shuffle size={18} /> <div><span>Difficulty</span><strong>Mixed levels</strong></div>
@@ -102,7 +93,7 @@ export default function MockInterviewSetupPage() {
           <div className="setup-card">
             <h2 className="setup-card-title">
               Question Preview
-              <span className="setup-preview-note">5 random questions will be selected</span>
+              <span className="setup-preview-note">10 unique questions are being prepared</span>
             </h2>
             <div className="setup-preview-list">
               {loading ? (

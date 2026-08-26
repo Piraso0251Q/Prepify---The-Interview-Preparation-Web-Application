@@ -80,6 +80,9 @@ export const questionsAPI = {
   // Get a single question by its MongoDB ID
   getById: (id) => apiFetch(`/questions/${id}`),
 
+  // Generate 5 unique AI questions (and save to DB silently)
+  generate: (role) => apiFetch(`/questions/generate?role=${encodeURIComponent(role)}`),
+
   // Admin: add a question
   create: (questionData) =>
     apiFetch("/questions/admin", { method: "POST", body: JSON.stringify(questionData) }),
