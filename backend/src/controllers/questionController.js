@@ -190,39 +190,64 @@ const generateQuestions = async (req, res) => {
         model: "openai/gpt-oss-20b",
         temperature: 0.8,
         response_format: { type: "json_object" },
-      }),
+      }).catch(e => ({ error: true })),
       groq.chat.completions.create({
         messages: [{ role: "system", content: prompt }, { role: "user", content: "Generate batch 2 (completely different from batch 1)" }],
         model: "openai/gpt-oss-20b",
         temperature: 0.9,
         response_format: { type: "json_object" },
-      })
+      }).catch(e => ({ error: true }))
     ]);
 
-    const parsed1 = JSON.parse(res1.choices[0]?.message?.content || '{"questions":[]}');
-    const parsed2 = JSON.parse(res2.choices[0]?.message?.content || '{"questions":[]}');
-    
-    const combinedQuestions = [...(parsed1.questions || []), ...(parsed2.questions || [])];
+    const safeParse = (res) => {
+      if (res?.error || !res?.choices?.[0]?.message?.content) return [];
+      try {
+        return JSON.parse(res.choices[0].message.content).questions || [];
+      } catch (e) {
+        console.error("JSON parse error for batch:", e);
+        return [];
+      }
+    };
 
-    // Sanitize the output to strictly match our Mongoose Schema enums
+    const parsed1 = safeParse(res1);
+    const parsed2 = safeParse(res2);
+    
+    let combinedQuestions = [...parsed1, ...parsed2];
+
+    // Sanitize the newly generated AI output
     const newQuestions = combinedQuestions.map(q => ({
       title: q.title || "Untitled Question",
       description: q.description || "",
-      role: role, // Force the requested role so enum doesn't fail
+      role: role, 
       topic: q.topic || "General",
-      // Ensure difficulty matches enum exactly
       difficulty: ["Easy", "Medium", "Hard"].includes(q.difficulty) ? q.difficulty : "Medium",
       modelAnswer: q.modelAnswer || "No answer provided.",
       explanation: q.explanation || "",
       keywords: Array.isArray(q.keywords) ? q.keywords : [],
     }));
 
-    // Secretly save them to the database so they have real MongoDB _ids
-    const savedQuestions = await Question.insertMany(newQuestions);
+    // Save only the newly generated valid AI questions
+    let finalQuestions = [];
+    if (newQuestions.length > 0) {
+       finalQuestions = await Question.insertMany(newQuestions);
+    }
+
+    // Force exact 10 output. Slice if > 10, pad with DB if < 10
+    if (finalQuestions.length > 10) {
+      finalQuestions = finalQuestions.slice(0, 10);
+    } else if (finalQuestions.length < 10) {
+      console.log(`AI only generated ${finalQuestions.length} valid questions. Padding with DB questions.`);
+      const needed = 10 - finalQuestions.length;
+      const dbPad = await Question.aggregate([
+        { $match: { role } }, 
+        { $sample: { size: needed } }
+      ]);
+      finalQuestions = [...finalQuestions, ...dbPad];
+    }
 
     res.status(200).json({
       success: true,
-      questions: savedQuestions,
+      questions: finalQuestions,
     });
   } catch (error) {
     console.error("Generate questions error Details:", error);
