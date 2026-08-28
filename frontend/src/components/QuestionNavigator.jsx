@@ -5,11 +5,12 @@ export const QuestionNavigator = ({ questions, answers, currentIndex, onSelect }
     <p className="qnav-label">Questions</p>
     <div className="qnav-dots">
       {questions.map((q, i) => {
-        const answered = !!answers[q.id]?.trim();
+        const qId = q._id || q.id;
+        const answered = !!answers[qId]?.trim();
         const current  = i === currentIndex;
         return (
           <button
-            key={q.id}
+            key={qId}
             className={`qnav-dot ${current ? "qnav-current" : ""} ${answered && !current ? "qnav-answered" : ""}`}
             onClick={() => onSelect(i)}
             aria-label={`Question ${i + 1}${answered ? " (answered)" : ""}${current ? " (current)" : ""}`}

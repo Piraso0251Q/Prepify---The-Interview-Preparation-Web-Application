@@ -21,6 +21,8 @@ export default function MockInterviewPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [autoSubmit, setAutoSubmit] = useState(false);
 
+  const [saveMessage, setSaveMessage] = useState("");
+
   const handleExpire = () => {
     setAutoSubmit(true);
     doSubmit();
@@ -36,12 +38,19 @@ export default function MockInterviewPage() {
   if (!questions.length) return null;
 
   const currentQuestion = questions[currentIndex];
+  // Helper to safely get the correct ID since MongoDB uses _id
+  const qId = currentQuestion._id || currentQuestion.id;
   const answeredCount = Object.values(answers).filter(a => a?.trim()).length;
 
   const doSubmit = () => {
     submitInterview();
     navigate("/results/new");
     setShowConfirm(false);
+  };
+
+  const handleSave = () => {
+    setSaveMessage("✓ Saved");
+    setTimeout(() => setSaveMessage(""), 2000);
   };
 
   return (
@@ -94,13 +103,13 @@ export default function MockInterviewPage() {
             <div className="interview-editor-header">
               <span>Your Answer</span>
               <span className="interview-char-count">
-                {(answers[currentQuestion.id] || "").length} chars
+                {(answers[qId] || "").length} chars
               </span>
             </div>
             <textarea
               className="interview-editor"
-              value={answers[currentQuestion.id] || ""}
-              onChange={(e) => setAnswer(currentQuestion.id, e.target.value)}
+              value={answers[qId] || ""}
+              onChange={(e) => setAnswer(qId, e.target.value)}
               placeholder="Type your answer here... Explain your understanding clearly and use key technical terms."
               aria-label="Your answer"
               rows={14}
@@ -117,6 +126,16 @@ export default function MockInterviewPage() {
             >
               Previous
             </Button>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <Button variant="outline" onClick={handleSave}>
+                Save Answer
+              </Button>
+              <span style={{ color: '#10b981', fontSize: '14px', width: '60px', opacity: saveMessage ? 1 : 0, transition: 'opacity 0.2s' }}>
+                {saveMessage}
+              </span>
+            </div>
+
             <Button
               variant="secondary"
               iconRight={<ArrowRight size={16} />}
