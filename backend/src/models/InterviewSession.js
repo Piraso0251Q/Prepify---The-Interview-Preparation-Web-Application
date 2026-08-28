@@ -11,7 +11,7 @@ const interviewSessionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // Snapshot of question titles (so history stays readable even if question is deleted)
+    
     questions: [
       {
         questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
@@ -20,7 +20,7 @@ const interviewSessionSchema = new mongoose.Schema(
         difficulty: String,
       },
     ],
-    // Map of questionId → answer text written by user
+    
     answers: {
       type: Map,
       of: String,
@@ -34,17 +34,17 @@ const interviewSessionSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    // Time taken in seconds
+
     timeTaken: {
       type: Number,
       default: 0,
     },
-    // Score = number of questions answered (non-empty answers)
+    
     score: {
       type: Number,
       default: 0,
     },
-    // Overall score percentage calculated by the frontend
+ 
     overallScore: {
       type: Number,
       default: 0,

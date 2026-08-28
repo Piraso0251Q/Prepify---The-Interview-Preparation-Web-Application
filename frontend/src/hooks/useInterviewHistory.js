@@ -5,7 +5,7 @@ export const useInterviewHistory = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Load history from backend on mount
+  
   useEffect(() => {
     const load = async () => {
       const token = localStorage.getItem("accessToken");
@@ -35,17 +35,17 @@ export const useInterviewHistory = () => {
         completedAt: data.session.endTime || data.session.createdAt,
         overallScore: data.session.overallScore || 0,
       };
-      // Add the saved session to the top of local state
+      
       setHistory(prev => [mapped, ...prev]);
       return mapped;
     }
     return null;
   };
 
-  // Get a single session by ID from local state
+ 
   const getEntry = (id) => history.find(e => e._id === id || e.id === id);
 
-  // Clear all history
+  
   const clearHistory = async () => {
     await historyAPI.clear();
     setHistory([]);

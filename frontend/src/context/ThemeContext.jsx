@@ -19,7 +19,7 @@ export const ThemeProvider = ({ children }) => {
     storage.set(STORAGE_KEYS.THEME, theme);
   }, [theme, resolvedTheme]);
 
-  // Listen for system preference changes
+  
   useEffect(() => {
     if (theme !== "system") return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");

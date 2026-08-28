@@ -10,15 +10,14 @@ const {
 } = require("../controllers/questionController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
-// ── Public question routes (any logged-in user) ────────────
-router.get("/generate", protect, generateQuestions); // GET  /api/questions/generate
-router.get("/",    protect, getQuestions);      // GET  /api/questions
-router.get("/:id", protect, getQuestionById);   // GET  /api/questions/:id
+// logged in user routes
+router.get("/generate", protect, generateQuestions); 
+router.get("/",    protect, getQuestions);      
+router.get("/:id", protect, getQuestionById);   
 
-// ── Admin-only routes ──────────────────────────────────────
-// protect runs first (checks JWT), then adminOnly (checks isAdmin)
-router.post(  "/admin",     protect, adminOnly, createQuestion);   // POST   /api/questions/admin
-router.put(   "/admin/:id", protect, adminOnly, updateQuestion);   // PUT    /api/questions/admin/:id
-router.delete("/admin/:id", protect, adminOnly, deleteQuestion);   // DELETE /api/questions/admin/:id
+// admin routes
+router.post(  "/admin",     protect, adminOnly, createQuestion);  
+router.put(   "/admin/:id", protect, adminOnly, updateQuestion);   
+router.delete("/admin/:id", protect, adminOnly, deleteQuestion);   
 
 module.exports = router;

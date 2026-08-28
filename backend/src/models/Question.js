@@ -41,11 +41,10 @@ const questionSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // adds createdAt and updatedAt automatically
+    timestamps: true, 
   }
 );
 
-// ── Text index for search (title + topic) ─────────────────
 // This lets us do text search like: ?search=virtual+dom
 questionSchema.index({ title: "text", topic: "text" });
 

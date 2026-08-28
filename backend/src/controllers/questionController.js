@@ -1,23 +1,24 @@
 const Question = require("../models/Question");
 
-// ─────────────────────────────────────────────────────────
-// @route   GET /api/questions
-// @desc    Get all questions with optional filters
-// @access  Private (logged in users)
-// Query params: ?role=Frontend&difficulty=Easy&topic=React&search=virtual+dom
-// ─────────────────────────────────────────────────────────
+
+/**
+ * contains business logic for the  questions CRUD
+ * used Groq LLM for fetching questions, to tackle the rate limit issues we use the seeded question to pad it  if the llm give less then 10 questions.
+ */
+
+
 const getQuestions = async (req, res) => {
   try {
     const { role, difficulty, topic, search } = req.query;
 
-    // Build the filter object dynamically
+   
     const filter = {};
 
     if (role)       filter.role       = role;
     if (difficulty) filter.difficulty = difficulty;
     if (topic)      filter.topic      = topic;
 
-    // Text search on title and topic (uses the text index we created)
+    
     if (search) {
       filter.$text = { $search: search };
     }
@@ -35,11 +36,7 @@ const getQuestions = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// @route   GET /api/questions/:id
-// @desc    Get a single question by its ID
-// @access  Private (logged in users)
-// ─────────────────────────────────────────────────────────
+
 const getQuestionById = async (req, res) => {
   try {
     const question = await Question.findById(req.params.id);
@@ -58,16 +55,12 @@ const getQuestionById = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// @route   POST /api/admin/questions
-// @desc    Add a new question (Admin only)
-// @access  Private + Admin
-// ─────────────────────────────────────────────────────────
+
 const createQuestion = async (req, res) => {
   try {
     const { title, description, role, topic, difficulty, modelAnswer, explanation, keywords } = req.body;
 
-    // Basic validation
+  
     if (!title || !modelAnswer) {
       return res.status(400).json({
         success: false,
@@ -97,17 +90,13 @@ const createQuestion = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// @route   PUT /api/admin/questions/:id
-// @desc    Update a question (Admin only)
-// @access  Private + Admin
-// ─────────────────────────────────────────────────────────
+
 const updateQuestion = async (req, res) => {
   try {
     const question = await Question.findByIdAndUpdate(
       req.params.id,
-      req.body,          // update with whatever fields are sent
-      { new: true, runValidators: true }  // return updated doc + validate
+      req.body,          
+      { new: true, runValidators: true }  
     );
 
     if (!question) {
@@ -125,11 +114,7 @@ const updateQuestion = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// @route   DELETE /api/admin/questions/:id
-// @desc    Delete a question (Admin only)
-// @access  Private + Admin
-// ─────────────────────────────────────────────────────────
+
 const deleteQuestion = async (req, res) => {
   try {
     const question = await Question.findByIdAndDelete(req.params.id);
@@ -148,11 +133,7 @@ const deleteQuestion = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// @route   GET /api/questions/generate
-// @desc    Generate 5 unique questions via Groq AI & save to DB
-// @access  Private (logged in users)
-// ─────────────────────────────────────────────────────────
+
 const { Groq } = require("groq-sdk");
 const generateQuestions = async (req, res) => {
   try {
@@ -161,7 +142,7 @@ const generateQuestions = async (req, res) => {
       return res.status(400).json({ success: false, message: "Role is required for generation." });
     }
 
-    // Check if API key is configured
+    
     if (!process.env.GROQ_API_KEY) {
       console.warn("GROQ_API_KEY not found. Falling back to database questions.");
       // Fallback: pick 10 random from DB if no API key
@@ -183,7 +164,7 @@ const generateQuestions = async (req, res) => {
     - explanation (string: 1 sentence explaining why interviewers ask this)
     - keywords (array of strings: 4-6 crucial technical terms expected in the answer)`;
 
-    // Fetch 5 questions twice in parallel to avoid hitting the AI's maximum token limit for a single JSON block
+    
     const [res1, res2] = await Promise.all([
       groq.chat.completions.create({
         messages: [{ role: "system", content: prompt }, { role: "user", content: "Generate batch 1" }],
@@ -214,7 +195,7 @@ const generateQuestions = async (req, res) => {
     
     let combinedQuestions = [...parsed1, ...parsed2];
 
-    // Sanitize the newly generated AI output
+    
     const newQuestions = combinedQuestions.map(q => ({
       title: q.title || "Untitled Question",
       description: q.description || "",
@@ -226,13 +207,13 @@ const generateQuestions = async (req, res) => {
       keywords: Array.isArray(q.keywords) ? q.keywords : [],
     }));
 
-    // Save only the newly generated valid AI questions
+   
     let finalQuestions = [];
     if (newQuestions.length > 0) {
        finalQuestions = await Question.insertMany(newQuestions);
     }
 
-    // Force exact 10 output. Slice if > 10, pad with DB if < 10
+
     if (finalQuestions.length > 10) {
       finalQuestions = finalQuestions.slice(0, 10);
     } else if (finalQuestions.length < 10) {

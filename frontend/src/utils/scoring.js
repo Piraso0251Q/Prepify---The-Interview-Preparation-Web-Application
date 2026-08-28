@@ -1,6 +1,6 @@
-// ============================================================
+// 
 // SCORING UTILITY
-// ============================================================
+// 
 
 export const scoreAnswer = (question, userAnswer) => {
   if (!userAnswer || userAnswer.trim().length === 0) return 0;

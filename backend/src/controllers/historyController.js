@@ -1,15 +1,15 @@
 const InterviewSession = require("../models/InterviewSession");
 
-// ─────────────────────────────────────────────────────────
-// @route   POST /api/history
-// @desc    Save a completed interview session
-// @access  Private
-// ─────────────────────────────────────────────────────────
+
+/**
+ * contains business logic for history feature 
+ */
+
 const saveSession = async (req, res) => {
   try {
     const { role, questions, answers, startTime, endTime, timeTaken, overallScore } = req.body;
 
-    // Count how many questions were actually answered (non-empty)
+    
     const answersMap = answers || {};
     const answeredCount = Object.values(answersMap).filter(
       (a) => a && a.trim().length > 0
@@ -39,15 +39,11 @@ const saveSession = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// @route   GET /api/history
-// @desc    Get all sessions for the logged-in user
-// @access  Private
-// ─────────────────────────────────────────────────────────
+
 const getSessions = async (req, res) => {
   try {
     const sessions = await InterviewSession.find({ userId: req.user._id })
-      .sort({ createdAt: -1 }); // newest first
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -60,16 +56,12 @@ const getSessions = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// @route   GET /api/history/:id
-// @desc    Get a single session by ID (for Results page)
-// @access  Private
-// ─────────────────────────────────────────────────────────
+
 const getSessionById = async (req, res) => {
   try {
     const session = await InterviewSession.findOne({
       _id: req.params.id,
-      userId: req.user._id, // ensure user can only see their own sessions
+      userId: req.user._id, 
     });
 
     if (!session) {
@@ -86,11 +78,7 @@ const getSessionById = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// @route   DELETE /api/history
-// @desc    Clear all interview history for the logged-in user
-// @access  Private
-// ─────────────────────────────────────────────────────────
+
 const clearHistory = async (req, res) => {
   try {
     await InterviewSession.deleteMany({ userId: req.user._id });

@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     () => storage.get(STORAGE_KEYS.SUBSCRIPTION)
   );
 
-  // ── LOGIN — calls backend instead of checking hardcoded array ──
+  //  LOGIN 
   const login = async (email, password) => {
     const data = await authAPI.login(email, password);
     if (!data.success) return { success: false, error: data.message };
@@ -33,12 +33,12 @@ export const AuthProvider = ({ children }) => {
     return { success: true, isAdmin: data.user.isAdmin };
   };
 
-  // ── SIGNUP — calls backend to create a real account in DB ──────
+  //  SIGNUP 
   const signup = async (name, email, password) => {
     const data = await authAPI.signup(name, email, password);
     if (!data.success) return { success: false, error: data.message };
 
-    // Save token
+   
     localStorage.setItem("accessToken", data.accessToken);
 
     setUser(data.user);
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
     return { success: true };
   };
 
-  // ── LOGOUT — clears token + calls backend to clear cookie ──────
+  //  LOGOUT 
   const logout = async () => {
     await authAPI.logout();
     localStorage.removeItem("accessToken");
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Subscribe to a plan: 'monthly' | 'quarterly' | 'yearly'
+  
   const subscribe = (plan) => {
     const now = new Date();
     const daysMap = { monthly: 30, quarterly: 90, yearly: 365 };

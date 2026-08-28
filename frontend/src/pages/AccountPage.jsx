@@ -107,7 +107,7 @@ export default function AccountPage() {
         </div>
       </div>
 
-      {/* ── Token balance + tier ── */}
+      {/* ── Token balance  ── */}
       <div className="token-section">
         <div className="token-balance-card">
           <div className="token-balance-icon" style={{ background: tier.bg, color: tier.color }}>

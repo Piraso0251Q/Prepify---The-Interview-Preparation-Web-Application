@@ -1,6 +1,6 @@
-// ============================================================
+
 // MOCK AI FEEDBACK TEMPLATES
-// ============================================================
+
 export const FEEDBACK_TEMPLATES = {
   excellent: {
     label: "Excellent",

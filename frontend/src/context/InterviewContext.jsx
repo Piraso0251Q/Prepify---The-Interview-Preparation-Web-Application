@@ -1,10 +1,10 @@
-import { createContext, useContext, useState, useReducer } from "react";
+import { createContext, useContext, useReducer } from "react";
 
 const InterviewContext = createContext(null);
 
 const initialState = {
   questions: [],
-  answers: {},       // { questionId: answerText }
+  answers: {},       
   currentIndex: 0,
   startTime: null,
   submitted: false,

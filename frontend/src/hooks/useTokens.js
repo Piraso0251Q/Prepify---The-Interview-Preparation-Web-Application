@@ -1,13 +1,4 @@
-// ============================================================
-// useTokens — Token economy based on interview performance
-// ============================================================
-// Token formula per interview session:
-//   base:   10 tokens for completing the session
-//   score:  floor(score / 10) bonus tokens  (0–10)
-//   bonus:  +5 if score >= 80 (Excellent)
-//           +3 if score >= 60 (Good)
-//   max per session: 25 tokens
-// ============================================================
+ 
 
 import { useState } from "react";
 import { storage, STORAGE_KEYS } from "../utils/storage";
