@@ -11,7 +11,15 @@ export const useInterviewHistory = () => {
       const token = localStorage.getItem("accessToken");
       if (!token) { setLoading(false); return; }
       const data = await historyAPI.getAll();
-      if (data.success) setHistory(data.sessions);
+      if (data.success) {
+        const mappedSessions = data.sessions.map(s => ({
+          ...s,
+          id: s._id,
+          completedAt: s.endTime || s.createdAt,
+          overallScore: s.overallScore || 0,
+        }));
+        setHistory(mappedSessions);
+      }
       setLoading(false);
     };
     load();
@@ -21,9 +29,15 @@ export const useInterviewHistory = () => {
   const addEntry = async (entry) => {
     const data = await historyAPI.save(entry);
     if (data.success) {
+      const mapped = {
+        ...data.session,
+        id: data.session._id,
+        completedAt: data.session.endTime || data.session.createdAt,
+        overallScore: data.session.overallScore || 0,
+      };
       // Add the saved session to the top of local state
-      setHistory(prev => [data.session, ...prev]);
-      return data.session;
+      setHistory(prev => [mapped, ...prev]);
+      return mapped;
     }
     return null;
   };

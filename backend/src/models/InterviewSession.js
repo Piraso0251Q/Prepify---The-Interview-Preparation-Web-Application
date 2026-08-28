@@ -44,6 +44,11 @@ const interviewSessionSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // Overall score percentage calculated by the frontend
+    overallScore: {
+      type: Number,
+      default: 0,
+    },
     totalQuestions: {
       type: Number,
       default: 0,

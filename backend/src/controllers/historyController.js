@@ -7,7 +7,7 @@ const InterviewSession = require("../models/InterviewSession");
 // ─────────────────────────────────────────────────────────
 const saveSession = async (req, res) => {
   try {
-    const { role, questions, answers, startTime, endTime, timeTaken } = req.body;
+    const { role, questions, answers, startTime, endTime, timeTaken, overallScore } = req.body;
 
     // Count how many questions were actually answered (non-empty)
     const answersMap = answers || {};
@@ -24,6 +24,7 @@ const saveSession = async (req, res) => {
       endTime: new Date(endTime),
       timeTaken: timeTaken || 0,
       score: answeredCount,
+      overallScore: overallScore || 0,
       totalQuestions: (questions || []).length,
     });
 

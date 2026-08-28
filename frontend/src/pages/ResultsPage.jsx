@@ -58,11 +58,11 @@ export default function ResultsPage() {
         startTime: new Date(Date.now() - 10 * 60 * 1000).toISOString(), // approximate
         endTime: new Date().toISOString(),
         timeTaken: 10 * 60, // seconds
+        overallScore: data.overallScore,
       };
 
       addEntry(sessionPayload);
       awardTokens(`interview-${Date.now()}`, data.overallScore, data.role);
-      resetInterview();
     }
   }, [data]);
 
