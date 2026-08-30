@@ -12,12 +12,6 @@ dotenv.config();
 connectDB();
 
 const app = express();
-
-// ── Security & Parsing Middleware ──────────────────────────
-app.use(helmet());           // Sets secure HTTP headers
-app.use(cookieParser());     // Lets us read cookies (used for refresh token)
-app.use(express.json());     // Lets us read JSON request bodies
-
 // ── CORS — allow only the frontend origin ──────────────────
 app.use(
   cors({
@@ -25,6 +19,11 @@ app.use(
     credentials: true,                // needed so cookies are sent/received
   })
 );
+
+// ── Security & Parsing Middleware ──────────────────────────
+app.use(helmet());           // Sets secure HTTP headers
+app.use(cookieParser());     // Lets us read cookies (used for refresh token)
+app.use(express.json());     // Lets us read JSON request bodies
 
 // ── Routes ─────────────────────────────────────────────────
 const authRoutes      = require("./src/routes/authRoutes");
