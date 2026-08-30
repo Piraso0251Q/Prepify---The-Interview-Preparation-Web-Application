@@ -1,5 +1,5 @@
 //  Base URL of our backend 
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "https://api-prepify.onrender.com/api";
 
 //  Core fetch wrapper 
 const apiFetch = async (endpoint, options = {}) => {
