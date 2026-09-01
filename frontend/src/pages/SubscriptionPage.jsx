@@ -11,7 +11,7 @@ const PLANS = [
     name: "Monthly",
     desc: "Full admin access, billed every month. Cancel anytime.",
     currency: "₹",
-    amount: "999",
+    amount: "0",
     period: "/ month",
     saving: null,
     ribbon: null,
